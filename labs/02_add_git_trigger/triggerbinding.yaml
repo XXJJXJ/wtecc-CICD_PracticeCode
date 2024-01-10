@@ -1,5 +1,11 @@
 apiVersion: triggers.tekton.dev/v1beta1
 kind: TriggerBinding
 metadata:
-  name: <place-name-here>
+  name: cd-binding
 spec:
+  params:
+    - name: repository
+      value: $(body.repository.url) # have to look at github event json to get these
+    - name: branch
+      # body.ref is not the branch name, more of commit hash
+      value: $(body.ref)
