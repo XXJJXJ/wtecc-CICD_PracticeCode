@@ -12,7 +12,30 @@ spec:
       image: alpine:3
       command: [/bin/echo]
       args: ["$(params.message)"]
-
+---
+apiVersion: tekton.dev/v1beta1
+kind: Task
+metadata:
+  name: nose
+spec:
+  description: Nose task
+  params:
+    - name: args
+      description: arguments passed to nosetests
+      type: string
+      default: "-v"
+  workspaces:
+  - name: source
+  steps:
+    - name: nosetests
+      image: "python:3.9-slim"
+      workingDir: $(workspaces.source.path)
+      script: |
+        #!/bin/bash
+        set -e
+        python -m pip install --upgrade pip wheel
+        pip install -r requirements.txt
+        nosetests $(params.args)
 ---
 apiVersion: tekton.dev/v1beta1
 kind: Task
